@@ -48,4 +48,5 @@ kubectl apply -f ingress.yaml
 - Create service account for jenkins with necessary permission to deploy application
 - Configure github credentials in Jenkins
 - Configure Dockerhub credentials in Jenkins
-- Write Jenkinsfile for whole CI/CD and upload it github repo
+- Create Jenkins pipeline and Configure SCM and build pipeline using Jenkinsfile
+- Write Jenkinsfile for push code in docker and deploy on kubernetes

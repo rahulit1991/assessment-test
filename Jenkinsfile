@@ -65,6 +65,7 @@ pipeline {
       steps {
         container('kubectl') {       
           sh 'kubectl apply -f deployment.yaml'
+          sh 'kubectl apply -f ingress.yaml'
         }
       }     
    }
