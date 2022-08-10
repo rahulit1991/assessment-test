@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sample-application
+  labels:
+    app.kubernetes.io/name: sample-application
+    app.kubernetes.io/instance: sample-application
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: "api.opstudio.cloud"
+    http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-application-svc
+                port:
+                  number: 80
+  - host: "jenkins.opstudio.cloud"
+    http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: jenkins-ci
+                port:
+                  number: 8080

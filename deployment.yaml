@@ -1,0 +1,73 @@
+# Source: sample-application/service.yaml
+iVersion: v1
+kind: Service
+metadata:
+  name: sample-application-svc
+  labels:
+    type: backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: sample-application
+    app.kubernetes.io/instance: sample-application
+---
+# Source: sample-application/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-application
+  labels:
+    app.kubernetes.io/name: sample-application
+    app.kubernetes.io/instance: sample-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sample-application
+      app.kubernetes.io/instance: sample-application
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sample-application
+        app.kubernetes.io/instance: sample-application
+    spec:
+      containers:
+        - name: sample-application
+          securityContext:
+             readOnlyRootFilesystem: true
+             allowPrivilegeEscalation: false
+             capabilities:
+               add: ["NET_ADMIN", "SYS_TIME"]
+             runAsNonRoot: true
+             runAsUser: 1000
+             runAsGroup: 3000
+          image: "rahulit1991/sample-nodejs:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+          resources:
+            limits:
+              cpu: 256m
+              memory: 512Mi
+            requests:
+              cpu: 256m
+              memory: 512Mi
